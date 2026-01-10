@@ -21,11 +21,9 @@ export function CountryFilters({
     onRegionChange,
 }: CountryFiltersProps) {
     const hasFilters = region !== "all"
-
     const clearFilters = () => {
         onRegionChange("all")
     }
-
     return (
         <div className="flex flex-wrap gap-2 mb-8 items-center">
             <div className="relative flex-1 min-w-[150px]">
@@ -37,14 +35,13 @@ export function CountryFilters({
                     className="pl-10 w-full"
                 />
             </div>
-
             <div className="min-w-[120px]">
                 <Select value={region} onValueChange={onRegionChange}>
                     <SelectTrigger className="w-full md:w-48">
                         <SelectValue placeholder="Filter by region" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">All Regions</SelectItem>
+                        <SelectItem value="all">All</SelectItem>
                         {REGIONS.map((r) => (
                             <SelectItem key={r} value={r}>
                                 {r}

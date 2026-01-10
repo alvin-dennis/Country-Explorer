@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button"
-
-interface PaginationProps {
-    currentPage: number
-    totalPages: number
-    onPageChange: (page: number) => void
-}
+import { PaginationProps } from "@/lib/types"
 
 function getPaginationRange(currentPage: number, totalPages: number, siblingCount = 1) {
     const totalPageNumbers = siblingCount * 2 + 5
@@ -54,7 +49,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                             className={
                                 item === currentPage
                                     ? "bg-gray-900 text-white dark:bg-white dark:text-black"
-                                    : "border border-gray-300 text-white/40 hover:bg-gray-100 dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
+                                    : "border border-gray-300 text-white/80 hover:bg-gray-600 dark:border-border dark:text-muted-foreground dark:hover:bg-muted"
                             }
                         >
                             {item}

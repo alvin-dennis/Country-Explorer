@@ -5,10 +5,8 @@ import { CountryInfo } from "@/lib/types";
 export async function fetchAllCountries(): Promise<CountryInfo[]> {
   try {
     const { data } = await axios.get<CountryInfo[]>(
-      "https://restcountries.com/v3.1/all?fields=name,cca2,ccn3,region,capital,flags,population,flag",
-      {
-        headers: { "Content-Type": "application/json" },
-      }
+      "https://restcountries.com/v3.1/all?fields=name,cca2,region,capital,flags,population",
+      { headers: { "Content-Type": "application/json" } }
     );
     return data;
   } catch (error) {
@@ -25,10 +23,8 @@ export async function fetchCountryByCode(
 ): Promise<CountryInfo | null> {
   try {
     const { data } = await axios.get<CountryInfo[] | CountryInfo>(
-      `https://restcountries.com/v3.1/alpha/${code}?fields=name,cca2,cca3,region,subregion,population,area,capital,languages,currencies,flags,coatOfArms,borders,timezones,continents`,
-      {
-        headers: { "Content-Type": "application/json" },
-      }
+      `https://restcountries.com/v3.1/alpha/${code}?fields=name,cca2,region,subregion,population,area,capital,languages,currencies,flags,borders,timezones,continents`,
+      { headers: { "Content-Type": "application/json" } }
     );
     return Array.isArray(data) ? data[0] : data;
   } catch (error) {

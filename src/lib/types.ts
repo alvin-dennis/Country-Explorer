@@ -4,7 +4,6 @@ export interface CountryInfo {
     official: string;
   };
   cca2: string;
-  ccn3: string;
   cioc?: string;
   region: string;
   subregion?: string;
@@ -15,15 +14,16 @@ export interface CountryInfo {
   currencies?: Record<string, { name: string; symbol: string }>;
   flags: {
     svg: string;
-    png?: string;
-  };
-  coatOfArms?: {
-    svg: string;
-    png?: string;
   };
   borders?: string[];
   timezones?: string[];
   continents?: string[];
+}
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 export interface CountryCardProps {
@@ -36,4 +36,15 @@ export interface CountryFiltersProps {
   onSearchChange: (value: string) => void;
   region: string;
   onRegionChange: (value: string) => void;
+}
+
+
+export interface CountryPageProps {
+  params: Promise<{
+    code: string;
+  }>;
+}
+
+export interface CountryDetailsProps {
+    country: CountryInfo
 }
