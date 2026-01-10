@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
@@ -26,15 +25,6 @@ export default function CountryPage() {
         enabled: !!code,
         staleTime: 1000 * 60 * 60 * 24,
     })
-    useEffect(() => {
-        if (isError) {
-            toast.error("Failed to load country details.")
-        }
-        if (!isLoading && !isError && !country) {
-            toast.error("Country not found.")
-            router.push("/")
-        }
-    }, [isError, isLoading, country, router])
     if (isLoading) {
         return (
             <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
@@ -48,7 +38,18 @@ export default function CountryPage() {
             </main>
         )
     }
-    if (!country) return null
+    if (isError) {
+        toast.error("Failed to load country details.");
+        router.push("/");
+        return null;
+    }
+
+    if (!country) {
+        toast.error("Country not found.");
+        router.push("/");
+        return null;
+    }
+
     return (
         <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <Link href="/">

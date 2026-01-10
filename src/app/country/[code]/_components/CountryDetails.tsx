@@ -25,7 +25,6 @@ export function CountryDetails({ country }: CountryDetailsProps) {
             addFavorite(country.cca2)
         }
     }
-
     const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
@@ -35,7 +34,6 @@ export function CountryDetails({ country }: CountryDetailsProps) {
             },
         },
     }
-
     const itemVariants: Variants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
