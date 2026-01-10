@@ -18,7 +18,6 @@ import Image from "next/image"
 export function CountryDetails({ country }: CountryDetailsProps) {
     const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore()
     const favorite = isFavorite(country.cca2)
-
     const toggleFavorite = () => {
         if (favorite) {
             removeFavorite(country.cca2)
@@ -44,7 +43,6 @@ export function CountryDetails({ country }: CountryDetailsProps) {
             y: 0,
         },
     }
-
     return (
         <MotionDiv variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
             <MotionDiv variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8">

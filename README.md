@@ -23,8 +23,7 @@ The application focuses on responsive design, usability, and optimized performan
 
 - **Search**: Instant filtering by country name.
 - **Region Filter**: Filter countries by continents (Africa, Americas, Asia, Europe, Oceania).
-- **Favorites**: Mark/unmark countries as favorites and filter only favorites.
-- **Sorting**: Sort countries by name (A-Z, Z-A) or population (Low-High, High-Low).
+- **Favorites**: Mark/unmark countries as favorites.
 - **Pagination**: Display countries in paginated grids for faster rendering.
 - **Responsive Design**: Works seamlessly across mobile, tablet, and desktop screens.
 - **Loading Skeletons**: Provides skeleton UI while fetching data.
@@ -39,7 +38,7 @@ The application focuses on responsive design, usability, and optimized performan
 - **State Management**: Zustand (for favorites handling)
 - **Data Fetching**: React Query (TanStack Query)
 - **Icons**: Lucide React
-- **Other**: React Markdown, Skeleton UI for loading states
+- **Other**: React Spinners, Skeleton for loading states
 
 ---
 

@@ -1,23 +1,54 @@
-import { notFound } from "next/navigation"
-import { fetchCountryByCode } from "@/services/api"
-import { CountryPageProps } from "@/lib/types"
+"use client"
+
+import { useEffect } from "react"
+import { useParams, useRouter } from "next/navigation"
+import { useQuery } from "@tanstack/react-query"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import { CountryDetails } from "@/app/country/[code]/_components/CountryDetails"
+import { CountryDetails } from "./_components/CountryDetails"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Suspense } from "react"
 import Link from "next/link"
+import type { CountryInfo } from "@/lib/types"
+import { fetchCountryByCode } from "@/services/api"
 
-async function CountryContent({ code }: { code: string }) {
-    const country = await fetchCountryByCode(code.toUpperCase())
-    if (!country) {
-        notFound()
+export default function CountryPage() {
+    const params = useParams()
+    const router = useRouter()
+    const code = (params.code as string)?.toUpperCase()
+    const {
+        data: country,
+        isLoading,
+        isError,
+    } = useQuery<CountryInfo | null>({
+        queryKey: ["country", code],
+        queryFn: () => fetchCountryByCode(code),
+        enabled: !!code,
+        staleTime: 1000 * 60 * 60 * 24,
+    })
+    useEffect(() => {
+        if (isError) {
+            toast.error("Failed to load country details.")
+        }
+        if (!isLoading && !isError && !country) {
+            toast.error("Country not found.")
+            router.push("/")
+        }
+    }, [isError, isLoading, country, router])
+    if (isLoading) {
+        return (
+            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+                <Skeleton className="w-32 h-10" />
+                <Skeleton className="w-full h-96" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <Skeleton key={i} className="h-32" />
+                    ))}
+                </div>
+            </main>
+        )
     }
-    return <CountryDetails country={country} />
-}
-
-export default async function CountryPage({ params }: CountryPageProps) {
-    const resolvedParams = await params
+    if (!country) return null
     return (
         <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <Link href="/">
@@ -26,20 +57,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
                     Back
                 </Button>
             </Link>
-            <Suspense
-                fallback={
-                    <div className="space-y-8">
-                        <Skeleton className="w-full h-96" />
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {Array.from({ length: 6 }).map((_, i) => (
-                                <Skeleton key={i} className="h-32" />
-                            ))}
-                        </div>
-                    </div>
-                }
-            >
-                <CountryContent code={resolvedParams.code} />
-            </Suspense>
+            <CountryDetails country={country} />
         </main>
     )
 }

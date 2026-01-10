@@ -9,7 +9,6 @@ import { MotionDiv } from "@/components/Framer"
 export function CountryCard({ country, index = 0 }: CountryCardProps) {
     const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore()
     const favorite = isFavorite(country.cca2)
-
     const toggleFavorite = (e: React.MouseEvent) => {
         e.preventDefault()
         favorite ? removeFavorite(country.cca2) : addFavorite(country.cca2)
