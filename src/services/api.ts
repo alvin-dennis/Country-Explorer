@@ -25,7 +25,7 @@ export async function fetchCountryByCode(
 ): Promise<CountryInfo | null> {
   try {
     const { data } = await axios.get<CountryInfo[] | CountryInfo>(
-      `${API_URL}/v3.1/alpha/${code}?fields=name,cca2,region,subregion,population,area,capital,languages,currencies,flags,borders,timezones,continents`,
+      `${API_URL}/alpha/${code}?fields=name,cca2,region,subregion,population,area,capital,languages,currencies,flags,borders,timezones,continents`,
       { headers: { "Content-Type": "application/json" } }
     );
     return Array.isArray(data) ? data[0] : data;
