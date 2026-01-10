@@ -36,6 +36,8 @@ export interface CountryFiltersProps {
   onSearchChange: (value: string) => void;
   region: string;
   onRegionChange: (value: string) => void;
+  showFavorites: boolean;
+  onToggleFavorites: () => void;
 }
 
 

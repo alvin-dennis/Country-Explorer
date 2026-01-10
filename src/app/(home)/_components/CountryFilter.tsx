@@ -9,7 +9,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Search, X } from "lucide-react"
+import { Search, X, Heart } from "lucide-react"
 import { CountryFiltersProps } from "@/lib/types"
 
 const REGIONS = ["Africa", "Americas", "Asia", "Europe", "Oceania"]
@@ -19,9 +19,13 @@ export function CountryFilters({
     onSearchChange,
     region,
     onRegionChange,
+    showFavorites,
+    onToggleFavorites,
 }: CountryFiltersProps) {
-    const hasFilters = region !== "all"
+    const hasFilters = region !== "all" || searchTerm.length > 0
+
     const clearFilters = () => {
+        onSearchChange("")
         onRegionChange("all")
     }
     return (
@@ -35,6 +39,14 @@ export function CountryFilters({
                     className="pl-10 w-full"
                 />
             </div>
+            <Button
+                variant={showFavorites ? "default" : "outline"}
+                onClick={onToggleFavorites}
+                className="flex items-center gap-2"
+            >
+                <Heart className="h-4 w-4" />
+                Favorites
+            </Button>
             <div className="min-w-[120px]">
                 <Select value={region} onValueChange={onRegionChange}>
                     <SelectTrigger className="w-full md:w-48">
@@ -52,7 +64,7 @@ export function CountryFilters({
             </div>
             {hasFilters && (
                 <Button
-                    variant="default"
+                    variant="ghost"
                     size="icon"
                     onClick={clearFilters}
                     aria-label="Clear filters"

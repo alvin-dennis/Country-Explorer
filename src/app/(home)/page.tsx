@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { fetchAllCountries, filterCountries } from "@/services/api"
 import type { CountryInfo } from "@/lib/types"
@@ -15,15 +15,36 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("")
   const [region, setRegion] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
+  const [showFavorites, setShowFavorites] = useState(false)
+  const [favoriteCodes, setFavoriteCodes] = useState<string[]>([])
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("favoritecountries")
+      if (!stored) return
 
-  const { data: countries = [], isLoading, isError } = useQuery<CountryInfo[], Error>({
-    queryKey: ["countries"] as const,
-    queryFn: fetchAllCountries as () => Promise<CountryInfo[]>,
+      const parsed = JSON.parse(stored)
+      setFavoriteCodes(parsed?.state?.favorites ?? [])
+    } catch {
+      setFavoriteCodes([])
+    }
+  }, [])
+
+  const { data: countries = [], isLoading, isError } = useQuery<
+    CountryInfo[],
+    Error
+  >({
+    queryKey: ["countries"],
+    queryFn: fetchAllCountries,
   })
-
+  const baseCountries = useMemo(() => {
+    if (!showFavorites) return countries
+    return countries.filter((country) =>
+      favoriteCodes.includes(country.cca2)
+    )
+  }, [countries, showFavorites, favoriteCodes])
   const filteredCountries = useMemo(
-    () => filterCountries(countries, searchTerm, region),
-    [countries, searchTerm, region],
+    () => filterCountries(baseCountries, searchTerm, region),
+    [baseCountries, searchTerm, region]
   )
 
   const totalPages = Math.ceil(filteredCountries.length / ITEMS_PER_PAGE)
@@ -37,16 +58,19 @@ export default function Home() {
     setRegion(reg)
     setCurrentPage(1)
   }
-
+  const toggleFavorites = () => {
+    setShowFavorites((prev) => !prev)
+    setCurrentPage(1)
+  }
   return (
-    <main
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-    >
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <CountryFilters
         searchTerm={searchTerm}
         onSearchChange={(value) => handleFilterChange(value, region)}
         region={region}
         onRegionChange={(value) => handleFilterChange(searchTerm, value)}
+        showFavorites={showFavorites}
+        onToggleFavorites={toggleFavorites}
       />
 
       {isLoading ? (
@@ -67,7 +91,11 @@ export default function Home() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {paginatedCountries.map((country, index) => (
-              <CountryCard key={country.cca2} country={country} index={index} />
+              <CountryCard
+                key={country.cca2}
+                country={country}
+                index={index}
+              />
             ))}
           </div>
           <Pagination
@@ -79,11 +107,13 @@ export default function Home() {
       ) : (
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
-            <p className="text-xl font-semibold text-gray-900 dark:text-foreground mb-2">
-              No countries found
+            <p className="text-xl font-semibold mb-2">
+              {showFavorites
+                ? "No favorite countries found"
+                : "No countries found"}
             </p>
-            <p className="text-gray-600 dark:text-muted-foreground">
-              Try adjusting your search or filter
+            <p className="text-muted-foreground">
+              Try adjusting your search or filters
             </p>
           </div>
         </div>
