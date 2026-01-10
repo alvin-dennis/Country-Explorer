@@ -2,10 +2,12 @@ import axios from "axios";
 import { toast } from "sonner";
 import { CountryInfo } from "@/lib/types";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export async function fetchAllCountries(): Promise<CountryInfo[]> {
   try {
     const { data } = await axios.get<CountryInfo[]>(
-      "https://restcountries.com/v3.1/all?fields=name,cca2,region,capital,flags,population",
+      `${API_URL}/all?fields=name,cca2,region,capital,flags,population`,
       { headers: { "Content-Type": "application/json" } }
     );
     return data;
@@ -23,7 +25,7 @@ export async function fetchCountryByCode(
 ): Promise<CountryInfo | null> {
   try {
     const { data } = await axios.get<CountryInfo[] | CountryInfo>(
-      `https://restcountries.com/v3.1/alpha/${code}?fields=name,cca2,region,subregion,population,area,capital,languages,currencies,flags,borders,timezones,continents`,
+      `${API_URL}/v3.1/alpha/${code}?fields=name,cca2,region,subregion,population,area,capital,languages,currencies,flags,borders,timezones,continents`,
       { headers: { "Content-Type": "application/json" } }
     );
     return Array.isArray(data) ? data[0] : data;
