@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Pagination } from "./_components/Pagination"
 
 const ITEMS_PER_PAGE = 16
+const FAVOURITES_KEY = "favouritecountries"
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -17,31 +18,44 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1)
   const [showFavorites, setShowFavorites] = useState(false)
   const [favoriteCodes, setFavoriteCodes] = useState<string[]>([])
+  const [favoritesLoaded, setFavoritesLoaded] = useState(false)
+
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("favoritecountries")
-      if (!stored) return
-
+      const stored = localStorage.getItem(FAVOURITES_KEY)
+      if (!stored) {
+        setFavoritesLoaded(true)
+        return
+      }
       const parsed = JSON.parse(stored)
-      setFavoriteCodes(parsed?.state?.favorites ?? [])
+      const favorites = parsed?.state?.favorites ?? []
+
+      if (Array.isArray(favorites)) {
+        setFavoriteCodes(favorites.map((c: string) => c.toUpperCase()))
+      }
     } catch {
       setFavoriteCodes([])
+    } finally {
+      setFavoritesLoaded(true)
     }
   }, [])
 
-  const { data: countries = [], isLoading, isError } = useQuery<
-    CountryInfo[],
-    Error
-  >({
+  const {
+    data: countries = [],
+    isLoading,
+    isError,
+  } = useQuery<CountryInfo[], Error>({
     queryKey: ["countries"],
     queryFn: fetchAllCountries,
   })
   const baseCountries = useMemo(() => {
+    if (showFavorites && !favoritesLoaded) return []
     if (!showFavorites) return countries
     return countries.filter((country) =>
-      favoriteCodes.includes(country.cca2)
+      favoriteCodes.includes(country.cca2.toUpperCase())
     )
-  }, [countries, showFavorites, favoriteCodes])
+  }, [countries, showFavorites, favoriteCodes, favoritesLoaded])
+
   const filteredCountries = useMemo(
     () => filterCountries(baseCountries, searchTerm, region),
     [baseCountries, searchTerm, region]
@@ -73,7 +87,7 @@ export default function Home() {
         onToggleFavorites={toggleFavorites}
       />
 
-      {isLoading ? (
+      {isLoading || (showFavorites && !favoritesLoaded) ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
             <div key={i} className="space-y-4">

@@ -11,7 +11,6 @@ export const useThemeStore = create<ThemeState>((set) => ({
   setTheme: (themeInfo) => set({ themeInfo }),
 }));
 
-
 interface FavoritesStore {
   favorites: string[];
   addFavorite: (countryCode: string) => void;
@@ -35,7 +34,7 @@ export const useFavoritesStore = create<FavoritesStore>()(
         get().favorites.includes(countryCode),
     }),
     {
-      name: "favoritecountries",
+      name: "favouritecountries",
     }
   )
 );
